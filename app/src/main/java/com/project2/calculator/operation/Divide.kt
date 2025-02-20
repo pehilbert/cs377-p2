@@ -8,4 +8,8 @@ class Divide : BinaryOperation {
 
         return a / b
     }
+
+    override fun getSymbol(): String {
+        return "÷"
+    }
 }

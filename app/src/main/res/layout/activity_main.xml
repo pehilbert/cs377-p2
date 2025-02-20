@@ -8,6 +8,22 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/previous_calc"
+        android:layout_width="match_parent"
+        android:layout_height="100sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:gravity="bottom"
+        android:padding="10dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
         android:id="@+id/number"
         android:layout_width="match_parent"
         android:layout_height="100sp"

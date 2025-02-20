@@ -4,4 +4,8 @@ class Plus : BinaryOperation {
     override fun calculate(a: Double, b: Double): Double {
         return a + b
     }
+
+    override fun getSymbol(): String {
+        return "+"
+    }
 }

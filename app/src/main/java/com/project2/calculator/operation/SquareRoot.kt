@@ -10,4 +10,8 @@ class SquareRoot : UnaryOperation {
 
         return sqrt(x)
     }
+
+    override fun getNotation(numberStr : String): String {
+        return "√$numberStr"
+    }
 }

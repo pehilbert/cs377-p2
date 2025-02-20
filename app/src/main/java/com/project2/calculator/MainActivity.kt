@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         // Clear button
         val clearButton : Button = findViewById(R.id.clear)
         clearButton.setOnClickListener {
-            clearNumberStr()
+            clear()
         }
 
         // Equals button
@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
         numberDisplay.text = currentNumberStr
     }
 
+    // Toggle the current number between positive and negative
     private fun invertNumberStr() {
         val numberDisplay: TextView = findViewById(R.id.number)
 
@@ -148,17 +149,21 @@ class MainActivity : AppCompatActivity() {
                 (currentNumberStr.toInt() * -1).toString()
             }
         } catch (e : Exception) {
-            clearNumberStr()
             Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show()
         }
 
         numberDisplay.text = currentNumberStr
     }
 
-    private fun clearNumberStr() {
+    private fun clear() {
         val numberDisplay: TextView = findViewById(R.id.number)
+        val previousCalc: TextView = findViewById(R.id.previous_calc)
+
         currentNumberStr = "0"
+        prevNumberStr = null
+        currentBinOperation = null
         numberDisplay.text = currentNumberStr
+        previousCalc.text = ""
     }
 
     private fun performUnaryOperation(operation: UnaryOperation) {
@@ -166,10 +171,10 @@ class MainActivity : AppCompatActivity() {
         val previousCalc: TextView = findViewById(R.id.previous_calc)
 
         try {
-            val previousCalcStr = "${operation.getNotation(currentNumberStr)} ="
+            val previousCalcStr = "${operation.getNotation(formatNumberStr(currentNumberStr))} ="
             val result : Double = operation.calculate(currentNumberStr.toDouble())
 
-            currentNumberStr = result.toString()
+            currentNumberStr = formatDouble(result)
 
             previousCalc.text = previousCalcStr
             numberDisplay.text = currentNumberStr
@@ -183,7 +188,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupBinaryOperation(operation: BinaryOperation) {
         val numberDisplay: TextView = findViewById(R.id.number)
         val previousCalc: TextView = findViewById(R.id.previous_calc)
-        val previousCalcStr = "${currentNumberStr} ${operation.getSymbol()}"
+        val previousCalcStr = "${formatNumberStr(currentNumberStr)} ${operation.getSymbol()}"
 
         if (prevNumberStr == null && currentBinOperation == null) {
             prevNumberStr = currentNumberStr
@@ -200,10 +205,10 @@ class MainActivity : AppCompatActivity() {
         val previousCalc : TextView = findViewById(R.id.previous_calc)
 
         try {
-            val previousCalcStr = "${prevNumberStr} ${currentBinOperation!!.getSymbol()} ${currentNumberStr} ="
+            val previousCalcStr = "${formatNumberStr(prevNumberStr!!)} ${currentBinOperation!!.getSymbol()} ${formatNumberStr(currentNumberStr)} ="
             val result : Double = currentBinOperation!!.calculate(prevNumberStr!!.toDouble(), currentNumberStr.toDouble())
 
-            currentNumberStr = result.toString()
+            currentNumberStr = formatDouble(result)
             prevNumberStr = null
             currentBinOperation = null
 
@@ -214,5 +219,19 @@ class MainActivity : AppCompatActivity() {
         } catch (e : Exception) {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    /* This function was written with the assistance of GPT 4o */
+    // Takes in a double, if whole number, returns string as integer, otherwise trims down to certain precision
+    private fun formatDouble(value: Double, precision: Int = 5): String {
+        return if (value % 1.0 == 0.0) {
+            value.toInt().toString()  // Convert to integer if it's a whole number
+        } else {
+            "%.${precision}f".format(value).trimEnd('0').trimEnd('.')  // Trim unnecessary trailing zeros and decimal point
+        }
+    }
+
+    private fun formatNumberStr(numberStr: String): String {
+        return formatDouble(numberStr.toDouble())
     }
 }

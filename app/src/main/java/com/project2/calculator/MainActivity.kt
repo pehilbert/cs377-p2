@@ -9,7 +9,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlin.math.sqrt
+import com.project2.calculator.operation.CalculatorException
+import com.project2.calculator.operation.Square
+import com.project2.calculator.operation.SquareRoot
+import com.project2.calculator.operation.UnaryOperation
 
 class MainActivity : AppCompatActivity() {
     private var currentNumberStr : String = "0"
@@ -62,13 +65,13 @@ class MainActivity : AppCompatActivity() {
         // Square root button
         val sqrtButton : Button = findViewById(R.id.sqrt)
         sqrtButton.setOnClickListener {
-            sqrtNumberStr()
+            performUnaryOperation(SquareRoot())
         }
 
         // Square button
         val squareButton : Button = findViewById(R.id.square)
         squareButton.setOnClickListener {
-            squareNumberStr()
+            performUnaryOperation(Square())
         }
     }
 
@@ -76,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         val numberDisplay: TextView = findViewById(R.id.number)
 
         if (newChar == '.') {
+            // Make sure there is only one decimal point in the number
             if (!currentNumberStr.contains('.')) {
                 currentNumberStr += newChar
             }
@@ -114,32 +118,15 @@ class MainActivity : AppCompatActivity() {
         numberDisplay.text = currentNumberStr
     }
 
-    private fun sqrtNumberStr() {
-        val number : Double = currentNumberStr.toDouble()
-        if (number > 0) {
-            val numberDisplay: TextView = findViewById(R.id.number)
-            currentNumberStr = sqrt(number).toString()
-            numberDisplay.text = currentNumberStr
-        } else {
-            Toast.makeText(this, "Cannot square root a negative number.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun squareNumberStr() {
+    private fun performUnaryOperation(operation: UnaryOperation) {
         val numberDisplay: TextView = findViewById(R.id.number)
 
-        // Check if number is decimal or not to avoid unwanted decimal points
         try {
-            currentNumberStr = if (currentNumberStr.contains('.')) {
-                (currentNumberStr.toDouble() * currentNumberStr.toDouble()).toString()
-            } else {
-                (currentNumberStr.toInt() * currentNumberStr.toInt()).toString()
-            }
-        } catch (e : Exception) {
-            clearNumberStr()
-            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show()
+            val result : Double = operation.calculate(currentNumberStr.toDouble())
+            currentNumberStr = result.toString()
+            numberDisplay.text = currentNumberStr
+        } catch (e : CalculatorException) {
+            Toast.makeText(this, "Error: " + e.message, Toast.LENGTH_SHORT).show()
         }
-
-        numberDisplay.text = currentNumberStr
     }
 }

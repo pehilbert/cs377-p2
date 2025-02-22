@@ -20,9 +20,9 @@ import com.project2.calculator.operation.Times
 import com.project2.calculator.operation.UnaryOperation
 
 class MainActivity : AppCompatActivity() {
-    private var currentNumberStr : String = "0"
-    private var currentBinOperation : BinaryOperation? = null
-    private var prevNumberStr : String? = null
+    private var currentNumberStr: String = "0"
+    private var currentBinOperation: BinaryOperation? = null
+    private var prevNumberStr: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         /* This section of code was written with the assistance of GPT 4o */
 
         // Get number buttons
-        val allButtons : ViewGroup = findViewById(R.id.buttons)
+        val allButtons: ViewGroup = findViewById(R.id.buttons)
         val numberButtons = (0 until allButtons.childCount)
             .map { allButtons.getChildAt(it) }
             .filterIsInstance<Button>()
@@ -58,13 +58,13 @@ class MainActivity : AppCompatActivity() {
         /* End of AI-assisted code */
 
         // Invert button (positive or negative)
-        val invertButton : Button = findViewById(R.id.invert)
+        val invertButton: Button = findViewById(R.id.invert)
         invertButton.setOnClickListener {
             invertNumberStr()
         }
 
         // Clear button
-        val clearButton : Button = findViewById(R.id.clear)
+        val clearButton: Button = findViewById(R.id.clear)
         clearButton.setOnClickListener {
             clear()
         }
@@ -80,13 +80,13 @@ class MainActivity : AppCompatActivity() {
         /* Unary Operations */
 
         // Square root button
-        val sqrtButton : Button = findViewById(R.id.sqrt)
+        val sqrtButton: Button = findViewById(R.id.sqrt)
         sqrtButton.setOnClickListener {
             performUnaryOperation(SquareRoot())
         }
 
         // Square button
-        val squareButton : Button = findViewById(R.id.square)
+        val squareButton: Button = findViewById(R.id.square)
         squareButton.setOnClickListener {
             performUnaryOperation(Square())
         }
@@ -118,7 +118,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun appendNumberStr(newChar : Char) {
+    // Types a new digit or decimal point into the current number string
+    private fun appendNumberStr(newChar: Char) {
         val numberDisplay: TextView = findViewById(R.id.number)
 
         if (newChar == '.') {
@@ -148,13 +149,14 @@ class MainActivity : AppCompatActivity() {
             } else {
                 (currentNumberStr.toInt() * -1).toString()
             }
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show()
         }
 
         numberDisplay.text = currentNumberStr
     }
 
+    // Called when the Clear button is clicked
     private fun clear() {
         val numberDisplay: TextView = findViewById(R.id.number)
         val previousCalc: TextView = findViewById(R.id.previous_calc)
@@ -166,25 +168,27 @@ class MainActivity : AppCompatActivity() {
         previousCalc.text = ""
     }
 
+    // Performs a given unary operation on the current number and updates the display
     private fun performUnaryOperation(operation: UnaryOperation) {
         val numberDisplay: TextView = findViewById(R.id.number)
         val previousCalc: TextView = findViewById(R.id.previous_calc)
 
         try {
             val previousCalcStr = "${operation.getNotation(formatNumberStr(currentNumberStr))} ="
-            val result : Double = operation.calculate(currentNumberStr.toDouble())
+            val result: Double = operation.calculate(currentNumberStr.toDouble())
 
             currentNumberStr = formatDouble(result)
 
             previousCalc.text = previousCalcStr
             numberDisplay.text = currentNumberStr
-        } catch (e : CalculatorException) {
+        } catch (e: CalculatorException) {
             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
         }
     }
 
+    // Prompts the user for the second number of a given binary operation, and updates the display
     private fun setupBinaryOperation(operation: BinaryOperation) {
         val numberDisplay: TextView = findViewById(R.id.number)
         val previousCalc: TextView = findViewById(R.id.previous_calc)
@@ -200,13 +204,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Performs the current selected binary operation and updates the display
     private fun performBinaryOperation() {
         val numberDisplay: TextView = findViewById(R.id.number)
-        val previousCalc : TextView = findViewById(R.id.previous_calc)
+        val previousCalc: TextView = findViewById(R.id.previous_calc)
 
         try {
             val previousCalcStr = "${formatNumberStr(prevNumberStr!!)} ${currentBinOperation!!.getSymbol()} ${formatNumberStr(currentNumberStr)} ="
-            val result : Double = currentBinOperation!!.calculate(prevNumberStr!!.toDouble(), currentNumberStr.toDouble())
+            val result: Double = currentBinOperation!!.calculate(prevNumberStr!!.toDouble(), currentNumberStr.toDouble())
 
             currentNumberStr = formatDouble(result)
             prevNumberStr = null
@@ -214,9 +219,9 @@ class MainActivity : AppCompatActivity() {
 
             previousCalc.text = previousCalcStr
             numberDisplay.text = currentNumberStr
-        } catch (e : CalculatorException) {
+        } catch (e: CalculatorException) {
             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
         }
     }
@@ -231,6 +236,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Converts the string to a number, then formats that number properly
     private fun formatNumberStr(numberStr: String): String {
         return formatDouble(numberStr.toDouble())
     }
